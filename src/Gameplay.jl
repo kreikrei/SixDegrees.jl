@@ -5,10 +5,10 @@ using ..Wikipedia
 export newgame
 
 function newgame(difficulty::Int)
-    articles = [Wikipedia.RANDOM_PAGE_URL]
+    articles = []
 
-    for i in 1:difficulty
-        article = fetchpage(rand(articles[i-1][:links]))
+    for i in 1:difficulty+1
+        article = i == 1 ? fetchpage() : articles[i-1].links |> rand |> fetchpage
         push!(articles, articleinfo(article))
     end
 

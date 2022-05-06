@@ -3,14 +3,14 @@ module Wikipedia
 using HTTP
 using Gumbo
 using Cascadia
+using ..Articles
 import Cascadia: matchFirst
 
 const PROTOCOL = "https://"
 const DOMAIN_NAME = "en.m.wikipedia.org"
 const RANDOM_PAGE_URL = "/wiki/Special:Random"
 
-export
-    fetchpage, articleinfo
+export fetchpage, articleinfo
 
 buildurl(url) = PROTOCOL * DOMAIN_NAME * url
 
@@ -27,7 +27,11 @@ function extractlinks(elem)
 end
 
 function extracttitle(elem)
-    matchFirst(Selector("#firstHeading"), elem) |> nodeText
+    try
+        matchFirst(Selector("#firstHeading"), elem) |> nodeText
+    catch
+        matchFirst(Selector("title"), elem) |> nodeText
+    end
 end
 
 function extractimage(elem)
@@ -37,14 +41,14 @@ end
 
 function articlelinks(content)
     if !isempty(content)
-        dom = Gumbo.parsehtml(content)
+        dom = parsehtml(content)
         extractlinks(dom.root)
     end
 end
 
 function articledom(content)
     if !isempty(content)
-        return Gumbo.parsehtml(content)
+        return parsehtml(content)
     end
     error("Article content can't be parsed into DOM")
 end
@@ -52,11 +56,11 @@ end
 function articleinfo(content)
     dom = articledom(content)
 
-    return Dict(
-        :content => content,
-        :links => extractlinks(dom.root),
-        :title => extracttitle(dom.root),
-        :image => extractimage(dom.root)
+    return Article(
+        content,
+        extractlinks(dom.root),
+        extracttitle(dom.root),
+        extractimage(dom.root)
     )
 end
 
