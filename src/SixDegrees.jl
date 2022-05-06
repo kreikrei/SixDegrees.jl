@@ -1,5 +1,8 @@
 module SixDegrees
 
-# Write your package code here.
+export newgame
+
+include("Wikipedia.jl")
+include("Gameplay.jl")
 
 end

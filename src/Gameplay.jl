@@ -2,8 +2,7 @@ module Gameplay
 
 using ..Wikipedia
 
-export
-    newgame
+export newgame
 
 function newgame(difficulty::Int)
     articles = [Wikipedia.RANDOM_PAGE_URL]
