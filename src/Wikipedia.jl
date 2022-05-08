@@ -30,7 +30,8 @@ function extracttitle(elem)
     try
         matchFirst(Selector("#firstHeading"), elem) |> nodeText
     catch
-        matchFirst(Selector("title"), elem) |> nodeText
+        str = matchFirst(Selector("title"), elem) |> nodeText
+        replace(str, r" - Wikipedia" => "")
     end
 end
 
